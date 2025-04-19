@@ -16,7 +16,7 @@ def generate_qr_code(request):
             qr.save(file_path)
 
             qr_url = os.path.join(settings.MEDIA_URL, file_name)
-            return render(request, 'qr_code_generated.html', {'res_name': res_name, 'qr_url': qr_url})
+            return render(request, 'qr_code_generated.html', {'res_name': res_name, 'qr_url': qr_url, 'file_name': file_name})
     else:
         form = QRCodeForm(request.POST or None)
         context = {
