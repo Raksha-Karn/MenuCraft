@@ -1,5 +1,6 @@
 asgiref==3.8.1
 Django==5.2
 pillow==11.2.1
-qrcode==8.1
+qrcode-artistic==3.0.2
+segno==1.6.6
 sqlparse==0.5.3
