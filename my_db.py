@@ -1,8 +1,6 @@
-from django import conf
 import psycopg2
 import os
 from dotenv import load_dotenv
-from calendar import c
 
 load_dotenv()
 
