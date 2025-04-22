@@ -1,5 +1,7 @@
+from os import read
 from rest_framework import serializers
 from menu.models import MenuCategory, MenuItem, Restaurant, MenuTemplate
+from idlelib.idle_test.test_config import usercfg
 
 
 class MenuTemplateSerializer(serializers.ModelSerializer):
@@ -29,3 +31,8 @@ class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         fields = '__all__'
+        read_only_fields = ['owner']
+
+    def create(self, validated_data):
+        owner = self.context['request'].user
+        return Restaurant.objects.create(owner=owner, **validated_data)

@@ -2,7 +2,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # path('restaurant/', views.RestaurantView.as_view(), name='restaurant'),
-    # path('menu-items/', views.MenuView.as_view(), name='menu'),
-    # path('menu-category/', views.MenuCategoryView.as_view(), name='menu-category'),
+    path('restaurants/', views.RestaurantListView.as_view(), name='restaurant-list'),
+    path('restaurants/<int:pk>/', views.RestaurantDetailView.as_view(), name='restaurant-detail'),
+    path('restaurants/<int:restaurant_id>/categories/', views.MenuCategoryListView.as_view(), name='menu-category-list'),
+    path('menu-categories/<int:pk>/', views.MenuCategoryDetailView.as_view(), name='menu-category-detail'),
+    path('menu-categories/<int:category_id>/items/', views.MenuItemListView.as_view(), name='menu-item-list'),
+    path('menu-items/<int:pk>/', views.MenuItemDetailView.as_view(), name='menu-item-detail'),
+    path('restaurants/<int:restaurant_id>/templates/', views.MenuTemplateListView.as_view(), name='menu-template-list'),
+    path('menu-templates/<int:pk>/', views.MenuTemplateDetailView.as_view(), name='menu-template-detail'),
 ]

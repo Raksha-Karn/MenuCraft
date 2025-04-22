@@ -1,30 +1,24 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Restaurant(models.Model):
+    owner = models.ForeignKey(User, related_name='restaurants', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=20)
     email = models.EmailField()
     website = models.URLField(blank=True, null=True)
-    opening_hours = models.CharField(max_length=100)
-    cuisine_type = models.CharField(max_length=50)
-    price_range = models.CharField(max_length=50)
-    rating = models.FloatField(blank=True, null=True)
-    image = models.ImageField(upload_to='restaurant_images/')
-    description = models.TextField()
-    social_media_platform = models.CharField(max_length=50)
-    social_media_url = models.URLField(blank=True, null=True)
-    opening_time = models.TimeField()
-    closing_time = models.TimeField()
-    closed = models.BooleanField(default=False)
+    opening_hours = models.CharField(max_length=100, blank=True, null=True)
+    closing_hours = models.CharField(max_length=100, blank=True, null=True)
+    available = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.name)
 
 
 class MenuCategory(models.Model):
-    restaurant = models.ForeignKey(Restaurant, related_name='categories', on_delete=models.CASCADE, default=Restaurant.objects.first())
+    restaurant = models.ForeignKey(Restaurant, related_name='categories', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     order = models.PositiveIntegerField(default=0)
