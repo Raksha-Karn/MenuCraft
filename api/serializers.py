@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from menu.models import MenuCategory, MenuItem, Restaurant
+from menu.models import MenuCategory, MenuItem, Restaurant, MenuTemplate
+
+
+class MenuTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuTemplate
+        fields = '__all__'
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
@@ -18,6 +24,7 @@ class MenuCategorySerializer(serializers.ModelSerializer):
 
 class RestaurantSerializer(serializers.ModelSerializer):
     categories = MenuCategorySerializer(many=True, read_only=True)
+    templates = MenuTemplateSerializer(many=True, read_only=True)
 
     class Meta:
         model = Restaurant
