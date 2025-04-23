@@ -9,8 +9,8 @@ class Restaurant(models.Model):
     phone_number = models.CharField(max_length=20)
     email = models.EmailField()
     website = models.URLField(blank=True, null=True)
-    opening_hours = models.CharField(max_length=100, blank=True, null=True)
-    closing_hours = models.CharField(max_length=100, blank=True, null=True)
+    opening_hours = models.CharField(max_length=100)
+    closing_hours = models.CharField(max_length=100)
     available = models.BooleanField(default=True)
 
     def __str__(self):
