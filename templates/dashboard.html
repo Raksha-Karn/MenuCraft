@@ -1,0 +1,164 @@
+{% extends "base.html" %} {% block title %}Dashboard | Restaurant Menu
+Generator{% endblock %} {% block content %}
+<div class="bg-white p-8 rounded-lg shadow-md">
+    <h2 class="font-playfair text-3xl mb-6">Dashboard</h2>
+
+    <div id="dashboard-content" class="space-y-6">
+        <div class="bg-gray-100 p-4 rounded">
+            <h3 class="font-playfair text-xl mb-2">
+                Welcome, <span id="username-display">User</span>!
+            </h3>
+            <p>
+                This is your personal dashboard where you can manage your
+                restaurant menus.
+            </p>
+        </div>
+
+        <div class="border-t pt-6">
+            <h3 class="font-playfair text-xl mb-4">Your Menus</h3>
+            <div
+                id="user-menus"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            >
+                <p id="loading-menus">Loading your menus...</p>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <a
+                href="/create-menu"
+                class="btn-primary py-2 px-6 rounded-md font-medium inline-block"
+            >
+                <i class="fas fa-plus mr-2"></i> Create New Menu
+            </a>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    function checkAuth() {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            window.location.href = "/login?next=/dashboard";
+            return false;
+        }
+        return true;
+    }
+
+    async function getUserInfo() {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await fetch("/api/auth/user/", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to get user info");
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("Error getting user info:", error);
+            return null;
+        }
+    }
+
+    async function loadUserMenus() {
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await fetch("/api/restaurants/", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to load menus");
+            }
+
+            const menus = await response.json();
+            const menusContainer = document.getElementById("user-menus");
+
+            document.getElementById("loading-menus").remove();
+
+            if (menus.length === 0) {
+                menusContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <p class="text-gray-500">You haven't created any menus yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            menus.forEach((menu) => {
+                const menuCard = document.createElement("div");
+                menuCard.className =
+                    "bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition";
+                menuCard.innerHTML = `
+                    <div class="p-4">
+                        <h4 class="font-playfair font-medium text-lg">${menu.name}</h4>
+                        <p class="text-sm text-gray-600 mt-1">Created: ${new Date(menu.created_at).toLocaleDateString()}</p>
+                        <div class="mt-4 flex space-x-2">
+                            <a href="restaurants/${menu.id}" class="text-blue-600 hover:underline text-sm">View</a>
+                            <a href="restaurants/${menu.id}/" class="text-green-600 hover:underline text-sm">Edit</a>
+                            <button data-menu-id="${menu.id}" class="delete-menu-btn text-red-600 hover:underline text-sm">Delete</button>
+                        </div>
+                    </div>
+                `;
+                menusContainer.appendChild(menuCard);
+            });
+
+            document.querySelectorAll(".delete-menu-btn").forEach((button) => {
+                button.addEventListener("click", handleDeleteMenu);
+            });
+        } catch (error) {
+            console.error("Error loading menus:", error);
+            const menusContainer = document.getElementById("user-menus");
+            document.getElementById("loading-menus").innerHTML =
+                "Failed to load menus. Please try again later.";
+        }
+    }
+
+    async function handleDeleteMenu(e) {
+        if (!confirm("Are you sure you want to delete this menu?")) {
+            return;
+        }
+
+        const menuId = e.target.dataset.menuId;
+
+        try {
+            const token = localStorage.getItem("accessToken");
+            const response = await fetch(`/api/restaurants/${menuId}/`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to delete menu");
+            }
+
+            e.target.closest(".bg-white").remove();
+        } catch (error) {
+            console.error("Error deleting menu:", error);
+            alert("Failed to delete menu. Please try again later.");
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        if (!checkAuth()) return;
+
+        const userInfo = await getUserInfo();
+        if (userInfo) {
+            document.getElementById("username-display").textContent =
+                userInfo.username;
+        }
+
+        loadUserMenus();
+    });
+</script>
+{% endblock %} {% endblock %}

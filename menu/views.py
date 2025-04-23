@@ -7,8 +7,8 @@ from PIL import Image
 import io
 from django.core.files.base import ContentFile
 
-def index(request):
-    return render(request, 'base.html')
+def dashboard(request):
+    return render(request, 'dashboard.html')
 
 
 def generate_qr_code(qr_customization):
@@ -65,3 +65,9 @@ def generate_qr_code(qr_customization):
     qr_customization.generated_qr_image.save(file_name, ContentFile(buffer.read()), save=True)
 
     return qr_customization.generated_qr_image.url
+
+def login_user(request):
+    return render(request, 'login.html')
+
+def register_user(request):
+    return render(request, 'register.html')
