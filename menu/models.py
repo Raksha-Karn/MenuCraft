@@ -59,3 +59,17 @@ class MenuTemplate(models.Model):
 
     def __str__(self):
         return f"{self.restaurant.name} - {self.name}"
+
+
+class QRCodeCustomization(models.Model):
+    template = models.ForeignKey(MenuTemplate, related_name='customizations', on_delete=models.CASCADE)
+    qr_code_size = models.PositiveIntegerField(default=200)
+    qr_code_color = models.CharField(max_length=7, default='#000000')
+    qr_code_background_color = models.CharField(max_length=7, default='#FFFFFF')
+    qr_code_module_drawer = models.CharField(max_length=20, default='rounded',
+                                             choices=[('rounded', 'Rounded'), ('circle', 'Circle')])
+    qr_code_color_mask = models.CharField(max_length=20, default='radial',
+                                          choices=[('radial', 'Radial'), ('linear', 'Linear')])
+
+    def __str__(self):
+        return f"{self.template.restaurant.name} - {self.template.name} - QR Code Customization"

@@ -1,7 +1,5 @@
-from os import read
 from rest_framework import serializers
-from menu.models import MenuCategory, MenuItem, Restaurant, MenuTemplate
-from idlelib.idle_test.test_config import usercfg
+from menu.models import MenuCategory, MenuItem, Restaurant, MenuTemplate, QRCodeCustomization
 
 
 class MenuTemplateSerializer(serializers.ModelSerializer):
@@ -36,3 +34,9 @@ class RestaurantSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         owner = self.context['request'].user
         return Restaurant.objects.create(owner=owner, **validated_data)
+
+
+class QRCodeCustomizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QRCodeCustomization
+        fields = '__all__'
